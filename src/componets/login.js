@@ -12,6 +12,12 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import { login } from '../services/authService'
+
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/core/Alert';
+
+import { useHistory } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -28,15 +34,52 @@ function Copyright(props) {
 
 const theme = createTheme();
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 export default function SignIn() {
+  const history = useHistory();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
     console.log({
       email: data.get('email'),
       password: data.get('password'),
     });
+
+    const user = {
+      email: data.get('email'),
+      password: data.get('password')
+    }
+    
+    login(user).then(
+      (response) => {
+        if (response.status === 200) {
+          localStorage.token = response.data.token;
+          localStorage.user = JSON.stringify(response.data.user);
+          history.push("/dashboard");
+        }
+
+      })
+      .catch((error) => {
+        setOpen(true);
+
+        console.log(error)
+      });
+
+  };
+
+  // alerta de erro
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
   };
 
   return (
@@ -90,6 +133,13 @@ export default function SignIn() {
             >
               Login
             </Button>
+
+            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                Senha Ou email incorreto!
+              </Alert>
+            </Snackbar>
+
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
