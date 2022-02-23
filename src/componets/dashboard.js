@@ -147,7 +147,7 @@ export default function Dashboard() {
           </DrawerHeader>
           <Divider />
           <Link to="/">Home</Link>
-          <Link to="orders">Pedidos</Link>
+          <Link to="/dashboard/orders">Pedidos</Link>
           <Link to="/topics">Coletas</Link>
 
           <Divider />
@@ -184,7 +184,7 @@ export default function Dashboard() {
           <Route path="/topics">
             <Topics />
           </Route>
-          <Route path="/orders" component={Orders}></Route>
+          <Route path="/dashboard/orders" component={Orders}></Route>
 
 
         </Box>
