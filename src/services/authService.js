@@ -1,8 +1,6 @@
-import api from './apiService';
 import axios from 'axios';
 
-export const login = (user) => {
-  debugger 
+export const login = (user) => { 
   return axios.post('http://localhost:3000/api/login',{ user});
 }
 

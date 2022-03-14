@@ -22,6 +22,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 
+
+// add pedido
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+
+// ***** 
 Row.propTypes = {
   row: PropTypes.shape({
     id: PropTypes.number.isRequired,
@@ -29,48 +35,43 @@ Row.propTypes = {
     payOut: PropTypes.bool.isRequired ,
     address: PropTypes.arrayOf(
       PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
+        description: PropTypes.string,
+        number: PropTypes.string,
+        reference: PropTypes.string,
+        street: PropTypes.string,
+        city: PropTypes.string,
+        cep: PropTypes.string,
+        district: PropTypes.string
       }),
     ).isRequired,
     recipentName: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
+    createdAt: PropTypes.string
   }).isRequired,
 };
 
-function createData(id, description, payOut, address, recipentName, price) {
-  // payOut == true ? 'pago': 'receber na entrega';
-  address = [
-    {
-      date: '2020-01-05',
-      customerId: '11091700',
-      amount: 3,
-    },
-    {
-      date: '2020-01-04',
-      customerId: '11091700',
-      amount: 3,
-    }
-  ];
-
+function createData(order) {
+  
   return {
-    id,
-    description,
-    recipentName,
-    payOut,
-    price,
-    address
+    id: order.id,
+    description: order.attributes.description,
+    recipentName: order.attributes.recipient_name,
+    payOut: order.attributes.paid_aout ? 'Pago' : 'Receber na entrega',
+    price:  order.attributes.value,
+    address: [
+      {
+        description: 'endereço de entrega',
+        number: '11',
+        reference: 'próximo ao ministério público',
+        street: 'rua maria do carmo',
+        city: 'Carmópolis de Minas',
+        cep: '35534-000',
+        district: 'Bairro glória'
+      }
+    ],
+    createdAt: order.attributes.created_at
   };
 }
-
-const rows = [
-  createData(1, 'sanduiche natural ', false,[], 'João', 13.50),
-  createData(2, 'sanduiche natural ', false,[], 'João', 13.50),
-  createData(3, 'sanduiche natural ', false,[], 'João', 13.50),
-  createData(4, 'sanduiche natural ', false,[], 'João', 13.50)
-  
-];
 
 function Row(props) {
   const { row } = props;
@@ -106,24 +107,37 @@ function Row(props) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
+                    <TableCell align="right">Descrição</TableCell>
+                    <TableCell align="right">Rua</TableCell>
+                    <TableCell align="right">Numero</TableCell>
+                    <TableCell align="right">Bairro</TableCell>
+                    <TableCell align="right">cidade</TableCell>
+                    <TableCell align="right">cep</TableCell>
                   </TableRow>
                 </TableHead>
                 
                 <TableBody>
                   {row.address.map((addressRow) => (
-                    <TableRow key={addressRow.date}>
-                      <TableCell component="th" scope="row">
-                        {addressRow.date}
+                    <TableRow key={addressRow.createdAt}>
+                      <TableCell component="th" align="right" scope="row">
+                        {addressRow.description}
                       </TableCell>
-                      <TableCell>{addressRow.customerId}</TableCell>
-                      <TableCell align="right">{addressRow.amount}</TableCell>
-                      <TableCell align="right">
-                        {Math.round(addressRow.amount * row.price * 100) / 100}
+                      <TableCell component="th" align="right" scope="row">
+                        {addressRow.street}
                       </TableCell>
+                      <TableCell component="th" align="right" scope="row">
+                        {addressRow.number}
+                      </TableCell>
+                      <TableCell component="th" align="right" scope="row">
+                        {addressRow.district}
+                      </TableCell>
+                      <TableCell component="th" align="right" scope="row">
+                        {addressRow.city}
+                      </TableCell>
+                      <TableCell component="th" align="right" scope="row">
+                        {addressRow.cep}
+                      </TableCell>
+                      
                     </TableRow>
                   ))}
                 </TableBody>
@@ -148,43 +162,33 @@ function Row(props) {
 
 export default function Orders() {
  
-  const [orders, getStateOrders] = React.useState('');
-  // const [rows, setRows] = React.useState([])
+  const [orders, setStateOrders] = React.useState([]);
  
-  // const getAllOrders = () => {
-  //   getOrders().then(res => { 
-  //     if (res.status === 200) {
-  //       const allOrders = JSON.stringify(res.data.data)
-  //       getStateOrders(allOrders);
-  //       let list_row = []
-  //       res.data.data.map((order) => { 
-  //         list_row.push({
-  //           id: order.id, 
-  //           description: order.attributes.description, 
-  //           recipientName: order.attributes.recipient_name, 
-  //           paidOut: order.attributes.paid_aout ? 'Pago' : 'Receber na entrega', 
-  //           value: order.attributes.value
-  //         })
-  //       })
-  //       setRows(list_row);
-  //     } else {
-  //       console.log('erro ao buscar pedidos');
-  //       console.log(res.status);
-  //     }
+  const fetchOrders = () => {
+    getOrders().then(res => { 
+      if (res.status === 200) {
+        let list_orders = []
 
-  //   }).catch (error => console.log('erro ao buscar pedidos'));
-  // }
+        res.data.data.map((order) => { 
+          list_orders.push(createData(order))
+        })
+        setStateOrders(list_orders);
+      } else {
+        console.log('erro ao buscar pedidos');
+        console.log(res.status);
+      }
 
-  // useEffect(() => {
-  //     getAllOrders();
-  // }, []);
+    }).catch (error => console.log('erro ao buscar pedidos'));
+  }
+
+  useEffect(() => {
+      fetchOrders();
+  }, []);
 
   return (
     <div>
       <h1> Pedidos </h1>
-      <ul>
-        {/* { orders }    */}
-      </ul>      
+     
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
           <TableHead>
@@ -198,12 +202,16 @@ export default function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {orders.map((row) => (
               <Row key={row.id} row={row} />
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Fab color="primary" aria-label="add">
+        <AddIcon />
+      </Fab>
   </div>
 
 

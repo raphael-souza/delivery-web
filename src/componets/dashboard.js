@@ -19,12 +19,16 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 
 import Orders from './orders'
+import Collects from './collects';
+import NewOrder from './newOrder';
+import Deliverymen from './deliveryMen';
 
 import {
   BrowserRouter as Router,
   Link,
   Route, // for later
 } from "react-router-dom";
+
 
 const drawerWidth = 240;
 
@@ -108,11 +112,11 @@ export default function Dashboard() {
 
 
   function Home() {
-    return <h1>HOME</h1>;
+    return <NewOrder/>;
   }
   
-  function Topics() {
-    return <h1>TOPICS</h1>;
+  function CollectsComponent() {
+    return <Collects />;
   }
 
 
@@ -146,9 +150,10 @@ export default function Dashboard() {
             </IconButton>
           </DrawerHeader>
           <Divider />
-          <Link to="/">Home</Link>
+          <Link to="/dashboard">Home</Link>
           <Link to="/dashboard/orders">Pedidos</Link>
-          <Link to="/topics">Coletas</Link>
+          <Link to="/dashboard/collects">Coletas</Link>
+          <Link to="/dashboard/deliverymen">Entregadores</Link>
 
           <Divider />
           <List>
@@ -178,13 +183,14 @@ export default function Dashboard() {
 
           {/* alterna entre os componentes filhos */}
 
-          <Route exact path="/">
+          <Route exact path="/dashboard">
             <Home />
           </Route>
-          <Route path="/topics">
-            <Topics />
+          <Route exact path="/dashboard/collects" >
+            <CollectsComponent />
           </Route>
           <Route path="/dashboard/orders" component={Orders}></Route>
+          <Route path="/dashboard/deliverymen" component={Deliverymen}></Route>
 
 
         </Box>
