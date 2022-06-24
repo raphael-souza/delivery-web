@@ -107,11 +107,47 @@ export default function NewOrder() {
               autoFocus
             />
 
+            <TextField
+              margin="normal"
+              fullWidth
+              id="recipientName"
+              label="Nome do cliente"
+              name="Recipentname"
+            />
+
+            <TextField
+              margin="normal"
+              fullWidth
+              id="price"
+              label="Valor do pedido"
+              name="Price"
+            />
+
             <Typography component="h3" variant="h5">
             Endereço
             </Typography>
 
+{/* utilizar api do google para gerar endereço https://www.devmedia.com.br/como-utilizar-a-google-geocoding-api-para-obter-enderecos/36751 */}
             <TextField
+              margin="normal"
+              fullWidth
+              id="formatedAddress"
+              label="Endereço"
+              name="formattedAddes"
+            />
+            
+            <Typography component="h3" variant="h5">
+            Forma de pagamento
+            </Typography>
+
+            <FormControlLabel
+              control={<Checkbox value="true" color="primary" />}
+              label="Pagar na entrega"
+            />
+
+
+
+            {/* <TextField
               margin="normal"
               required
               fullWidth
@@ -164,29 +200,8 @@ export default function NewOrder() {
               id="cistrict"
               label="Bairro"
               name="addressDistrict"
-            />
+            /> */}
 
-            _______________________________________
-            <TextField
-              margin="normal"
-              fullWidth
-              id="recipientName"
-              label="Nome do cliente"
-              name="Recipentname"
-            />
-
-            <TextField
-              margin="normal"
-              fullWidth
-              id="price"
-              label="Valor do pedido"
-              name="Price"
-            />
-
-            <FormControlLabel
-              control={<Checkbox value="true" color="primary" />}
-              label="Pagar na entrega"
-            />
             <Button
               type="submit"
               fullWidth
