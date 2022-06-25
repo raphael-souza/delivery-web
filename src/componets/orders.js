@@ -30,46 +30,25 @@ import AddIcon from '@mui/icons-material/Add';
 // ***** 
 Row.propTypes = {
   row: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    description: PropTypes.string.isRequired,
-    payOut: PropTypes.bool.isRequired ,
-    address: PropTypes.arrayOf(
-      PropTypes.shape({
-        description: PropTypes.string,
-        number: PropTypes.string,
-        reference: PropTypes.string,
-        street: PropTypes.string,
-        city: PropTypes.string,
-        cep: PropTypes.string,
-        district: PropTypes.string
-      }),
-    ).isRequired,
-    recipentName: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
+    id: PropTypes.number,
+    description: PropTypes.string,
+    payOut: PropTypes.string,
+    recipentName: PropTypes.string,
+    price: PropTypes.number,
     createdAt: PropTypes.string
   }).isRequired,
 };
 
-function createData(order) {
-  
+function createData(data) {
+  const order = data.attributes 
+  debugger 
   return {
     id: order.id,
-    description: order.attributes.description,
-    recipentName: order.attributes.recipient_name,
-    payOut: order.attributes.paid_aout ? 'Pago' : 'Receber na entrega',
-    price:  order.attributes.value,
-    address: [
-      {
-        description: 'endereço de entrega',
-        number: '11',
-        reference: 'próximo ao ministério público',
-        street: 'rua maria do carmo',
-        city: 'Carmópolis de Minas',
-        cep: '35534-000',
-        district: 'Bairro glória'
-      }
-    ],
-    createdAt: order.attributes.created_at
+    description: order.description || '-',
+    recipentName: order.recipient_name || '-',
+    payOut: !!order.paid_out ? 'Pago' : 'Receber na entrega',
+    price:  order.value || 0,
+    createdAt: order.created_at
   };
 }
 
@@ -116,7 +95,7 @@ function Row(props) {
                   </TableRow>
                 </TableHead>
                 
-                <TableBody>
+                {/* <TableBody>
                   {row.address.map((addressRow) => (
                     <TableRow key={addressRow.createdAt}>
                       <TableCell component="th" align="right" scope="row">
@@ -140,7 +119,7 @@ function Row(props) {
                       
                     </TableRow>
                   ))}
-                </TableBody>
+                </TableBody> */}
 
               </Table>
               {/* botões de ação */}

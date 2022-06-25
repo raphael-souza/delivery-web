@@ -10,7 +10,7 @@ import {Box} from '@mui/system';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { login } from '../services/authService'
+import { createOrder } from '../services/orders'
 
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -41,29 +41,16 @@ export default function NewOrder() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-
-    const user = {
-      email: data.get('email'),
-      password: data.get('password')
-    }
+    const newOrder = new FormData(event.currentTarget);    
     
-    login(user).then(
+    createOrder(newOrder).then(
       (response) => {
-        if (response.status === 200) {
-          localStorage.token = response.data.token;
-          localStorage.user = JSON.stringify(response.data.user);
-          history.push("/dashboard");
-        }
+        console.log('pedido cadastrado!')
+        setOpenSucess(true);
 
       })
       .catch((error) => {
         setOpen(true);
-
         console.log(error)
       });
 
@@ -71,13 +58,20 @@ export default function NewOrder() {
 
   // alerta de erro
   const [open, setOpen] = React.useState(false);
+  const [openSuccess, setOpenSucess] = React.useState(false);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setOpen(false);
+  };
+
+  const handleCloseSuccess = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSucess(false);
   };
 
   return (
@@ -112,7 +106,7 @@ export default function NewOrder() {
               fullWidth
               id="recipientName"
               label="Nome do cliente"
-              name="Recipentname"
+              name="recipientName"
             />
 
             <TextField
@@ -120,7 +114,7 @@ export default function NewOrder() {
               fullWidth
               id="price"
               label="Valor do pedido"
-              name="Price"
+              name="price"
             />
 
             <Typography component="h3" variant="h5">
@@ -133,7 +127,23 @@ export default function NewOrder() {
               fullWidth
               id="formatedAddress"
               label="Endereço"
-              name="formattedAddes"
+              name="formatedAddress"
+            />
+
+            <TextField
+              margin="normal"
+              fullWidth
+              id="lat"
+              label="Latitude"
+              name="lat"
+            />
+
+            <TextField
+              margin="normal"
+              fullWidth
+              id="long"
+              label="Longitude"
+              name="long"
             />
             
             <Typography component="h3" variant="h5">
@@ -144,63 +154,6 @@ export default function NewOrder() {
               control={<Checkbox value="true" color="primary" />}
               label="Pagar na entrega"
             />
-
-
-
-            {/* <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="description"
-              label="Descrição"
-              name="addressDescription"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              id="cep"
-              label="CEP"
-              name="addressCEP"
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="number"
-              label="Número"
-              name="addressNumber"
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              id="reference"
-              label="Referência"
-              name="addressReference"
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              id="street"
-              label="Rua"
-              name="addressStreet"
-            />
-
-            <TextField
-              margin="normal"
-              fullWidth
-              id="city"
-              label="Cidade"
-              name="addressCity"
-            />
-
-            <TextField
-              margin="normal"
-              fullWidth
-              id="cistrict"
-              label="Bairro"
-              name="addressDistrict"
-            /> */}
 
             <Button
               type="submit"
@@ -213,7 +166,13 @@ export default function NewOrder() {
 
             <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
               <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                Senha Ou email incorreto!
+                Erro ao cadastrar pedido!
+              </Alert>
+            </Snackbar>
+
+            <Snackbar open={openSuccess} autoHideDuration={3000} onClose={handleCloseSuccess}>
+              <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+                pedido cadastrado com sucesso!
               </Alert>
             </Snackbar>
 
